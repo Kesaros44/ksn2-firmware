@@ -1,0 +1,51 @@
+#include "ksn_2.dtsi"
+#include <dt-bindings/zmk/hid_indicators.h>
+
+/ {
+    /*
+     * Left-side LEDs:
+     *  CapsLock LED = D19 = P0.02  (pin21)
+     *  BLE/COND LED = D20 = P0.29  (pin20)
+     *
+     * Left-side encoder:
+     *  EN1 (A) = D18 = P0.09  (pin22)
+     *  EN2 (B) = D15 = P1.15  (pin23)
+     */
+
+    leds {
+        compatible = "gpio-leds";
+        caps_lock_led: caps_lock_led {
+            gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;   /* D19 = P0.02 */
+        };
+        ble_led: led_1 {
+            gpios = <&gpio0 29 GPIO_ACTIVE_HIGH>;  /* D20 = P0.29 */
+            label = "BLE Status LED";
+        };
+    };
+
+    indicators {
+        compatible = "zmk,indicator-leds";
+        caps_lock_indicator: caps_lock {
+            indicator = <HID_INDICATOR_CAPS_LOCK>;
+            leds = <&caps_lock_led>;
+        };
+    };
+
+    aliases {
+        indicator-led = &ble_led;
+    };
+
+    encoder_left: encoder_left {
+        compatible = "alps,ec11";
+        a-gpios = <&gpio0 9  (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* EN1 = D18 = P0.09 */
+        b-gpios = <&gpio1 15 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* EN2 = D15 = P1.15 */
+        steps = <80>;
+        status = "okay";
+    };
+
+    sensors {
+        compatible            = "zmk,keymap-sensors";
+        sensors               = <&encoder_left>;
+        triggers-per-rotation = <20>;
+    };
+};

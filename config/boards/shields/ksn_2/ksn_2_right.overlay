@@ -1,0 +1,27 @@
+#include "ksn_2.dtsi"
+
+&default_transform {
+    col-offset = <9>;
+};
+
+/ {
+    /*
+     * Right-side encoder:
+     *  A = P0.02  (pin21 = D19 on right — same nice!nano pin, not used as LED on right)
+     *  B = P0.29  (pin20 = D20 on right)
+     * Note: on the right side, D19/D20 are not used for LEDs (those are left-only).
+     */
+    encoder_right: encoder_right {
+        compatible = "alps,ec11";
+        a-gpios = <&gpio0 2  (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* D19 = P0.02 */
+        b-gpios = <&gpio0 29 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* D20 = P0.29 */
+        steps = <80>;
+        status = "okay";
+    };
+
+    sensors {
+        compatible            = "zmk,keymap-sensors";
+        sensors               = <&encoder_right>;
+        triggers-per-rotation = <20>;
+    };
+};
