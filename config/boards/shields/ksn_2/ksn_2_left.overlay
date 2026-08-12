@@ -8,8 +8,8 @@
      *  BLE/COND LED = D20 = P0.29  (pin20)
      *
      * Left-side encoder:
-     *  EN1 (A) = D18 = P0.09  (pin22)
-     *  EN2 (B) = D15 = P1.15  (pin23)
+     *  EN1 (A) = D15 = P1.15  (pin18)
+     *  EN2 (B) = D14 = P1.13  (pin17)
      */
 
     leds {
@@ -37,8 +37,8 @@
 
     encoder_left: encoder_left {
         compatible = "alps,ec11";
-        a-gpios = <&gpio0 9  (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* EN1 = D18 = P0.09 */
-        b-gpios = <&gpio1 15 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* EN2 = D15 = P1.15 */
+        a-gpios = <&gpio1 15 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* EN1 = D15 = P1.15 */
+        b-gpios = <&gpio1 13 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* EN2 = D14 = P1.13 */
         steps = <80>;
         status = "okay";
     };

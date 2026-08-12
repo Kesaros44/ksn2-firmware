@@ -6,6 +6,13 @@
 
 / {
     behaviors {
+        vol_encoder: vol_encoder {
+            compatible = "zmk,behavior-sensor-rotate-var";
+            #sensor-binding-cells = <2>;
+            bindings = <&kp>, <&kp>;
+            tap-ms = <40>;
+        };
+
         inc_dec_bl: inc_dec_bl {
             compatible = "zmk,behavior-sensor-rotate";
             #sensor-binding-cells = <0>;
@@ -18,56 +25,54 @@
 
         /*
          * KSN2 Matrix: 6 rows x 18 cols
-         *   Right half: col 0..8  (central,  encoder = left encoder_left)
-         *   Left  half: col 9..17 (peripheral, encoder = right encoder_right)
+         *   Left  half: col 0..8  (central, encoder = encoder_left)
+         *   Right half: col 9..17 (peripheral, no encoder)
          *
-         * sensor-bindings order: <central_sensor peripheral_sensor>
-         *   default_layer : left enc = volume, right enc = volume
-         *   func_layer    : left enc = BL,     right enc = BL
-         *   mac_layer     : left enc = volume, right enc = volume
+         * sensor-bindings order: <left_sensor>
+         *   default_layer : left encoder = volume
+         *   func_layer    : left encoder = backlight
+         *   mac_layer     : left encoder = volume
          *
-         * ── RIGHT half (col 0..8) ──────────────────────────────────────────
-         *  R0:  [enc] ESC   F1    F2    F3    F4    F5    F6    —
+         * -- LEFT half (col 0..8) -------------------------------------------
+         *  R0:  PAUSE ESC   F1    F2    F3    F4    F5    F6    —
          *  R1:  BSPC  `     1     2     3     4     5     6     —
-         *  R2:  DEL   TAB   —     Q     W     E     R     T     —
-         *  R3:  —     CAPS  —     A     S     D     F     G     —
-         *  R4:  —     LSHFT —     Z     X     C     V     B     —
+         *  R2:  DEL   TAB   —     Q     W     E     R     T     Y
+         *  R3:  MAC1  CAPS  —     A     S     D     F     G     H
+         *  R4:  MAC2  LSHFT —     Z     X     C     V     B     —
          *  R5:  —     MO1   LCTRL LGUI  LALT  —     SPC   —     —
          *
-         * ── LEFT half (col 9..17) ──────────────────────────────────────────
-         *  R0:  F7    F8    F9    F10   F11   F12   PSCRN PAUSE DEL
-         *  R1:  7     8     9     0     -     =     —     BSPC  HOME
+         * -- RIGHT half (col 9..17) -----------------------------------------
+         *  R0:  F7    F8    F9    F10   F11   F12   INS   DEL   HOME
+         *  R1:  7     8     9     0     -     =     —     BSPC  END
          *  R2:  Y     U     I     O     P     [     ]     \     PGUP
          *  R3:  H     J     K     L     ;     '     —     RET   PGDN
-         *  R4:  B     N     M     ,     .     /     RSHFT UP    END
-         *  R5:  —     SPC   LANG1 RALT  TOG2  RCTRL LEFT  DOWN  RIGHT
+         *  R4:  B     N     M     ,     .     /     LSHFT UP    K_APP
+         *  R5:  —     SPC   MO1   RALT  RGUI  RCTRL LEFT  DOWN  RIGHT
          *
          * Notes:
-         *  - RC(row, 0..8)  = right half cols
-         *  - RC(row, 9..17) = left  half cols
-         *  - "ko/eng" → LANG1 (한/영 전환)
-         *  - "mac/win" → tog 2 (mac_layer 토글)
-         *  - makro1/2/3 → &none (base), BT 제어 (func)
-         *  - col 8 on right (RC(x,8)) is &none — hardware not wired
+         *  - RC(row, 0..8)  = left half cols
+         *  - RC(row, 9..17) = right half cols
+         *  - Macro1/2/3 are placeholders until macro behaviors are defined.
+         *  - col 8 on left (RC(x,8)) is &none - hardware not wired
          */
 
         default_layer {
-            /* left encoder: volume, right encoder: volume */
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_VOL_UP C_VOL_DN>;
+            /* left encoder: volume */
+            sensor-bindings = <&vol_encoder C_VOL_UP C_VOL_DN>;
             bindings = <
-/* RIGHT col0..8 */                                                                               /* LEFT col9..17 */
-/* R0 */ &none     &kp ESC   &kp F1    &kp F2    &kp F3    &kp F4    &kp F5    &kp F6    &none      &kp F7    &kp F8    &kp F9    &kp F10   &kp F11   &kp F12   &kp PSCRN &kp PAUSE_BREAK &kp DEL
-/* R1 */ &kp BSPC  &kp GRAVE &kp N1    &kp N2    &kp N3    &kp N4    &kp N5    &kp N6    &none      &kp N7    &kp N8    &kp N9    &kp N0    &kp MINUS &kp EQUAL &none     &kp BSPC        &kp HOME
-/* R2 */ &kp DEL   &kp TAB   &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &none      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH        &kp PG_UP
-/* R3 */ &none     &kp CLCK  &none     &kp A     &kp S     &kp D     &kp F     &kp G     &none      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET         &kp PG_DN
-/* R4 */ &none     &kp LSHFT &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp RSHFT &kp UP          &kp END
-/* R5 */ &none     &mo 1     &kp LCTRL &kp LGUI  &kp LALT  &none     &kp SPACE &none     &none      &none     &kp SPACE &kp LANG1 &kp RALT  &tog 2    &kp RCTRL &kp LEFT  &kp DOWN        &kp RIGHT
+/* LEFT col0..8 */                                                                                /* RIGHT col9..17 */
+/* R0 */ &kp PAUSE_BREAK &kp ESC   &kp F1    &kp F2    &kp F3    &kp F4    &kp F5    &kp F6    &none      &kp F7    &kp F8    &kp F9    &kp F10   &kp F11   &kp F12   &kp INS   &kp DEL   &kp HOME
+/* R1 */ &kp BSPC        &kp GRAVE &kp N1    &kp N2    &kp N3    &kp N4    &kp N5    &kp N6    &none      &kp N7    &kp N8    &kp N9    &kp N0    &kp MINUS &kp EQUAL &none     &kp BSPC  &kp END
+/* R2 */ &kp DEL         &kp TAB   &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &kp Y      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH  &kp PG_UP
+/* R3 */ &none           &kp CLCK  &none     &kp A     &kp S     &kp D     &kp F     &kp G     &kp H      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET   &kp PG_DN
+/* R4 */ &none           &kp LSHFT &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp LSHFT &kp UP    &kp K_APP
+/* R5 */ &none           &mo 1     &kp LCTRL &kp LGUI  &kp LALT  &none     &kp SPACE &none     &none      &none     &kp SPACE &mo 1     &kp RALT  &kp RGUI  &kp RCTRL &kp LEFT  &kp DOWN  &kp RIGHT
             >;
         };
 
         func_layer {
-            /* left encoder: backlight, right encoder: backlight */
-            sensor-bindings = <&inc_dec_bl &inc_dec_bl>;
+            /* left encoder: backlight */
+            sensor-bindings = <&inc_dec_bl>;
             bindings = <
 /* R0 */ &trans     &trans    &trans       &trans       &trans       &trans       &trans       &trans    &trans     &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans          &bt BT_CLR
 /* R1 */ &trans     &trans    &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4 &out OUT_TOG &trans  &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans          &trans
@@ -79,15 +84,15 @@
         };
 
         mac_layer {
-            /* left encoder: volume, right encoder: volume */
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_VOL_UP C_VOL_DN>;
+            /* left encoder: volume */
+            sensor-bindings = <&vol_encoder C_VOL_UP C_VOL_DN>;
             bindings = <
-/* R0 */ &none     &kp ESC   &kp C_BRIGHTNESS_DEC &kp C_BRIGHTNESS_INC &none  &none     &none     &none     &none      &none     &kp C_PREV &kp C_PP  &kp C_NEXT &kp C_MUTE &kp C_VOL_DN &kp C_VOL_UP &kp PSCRN       &kp DEL
-/* R1 */ &kp BSPC  &kp GRAVE &kp N1    &kp N2    &kp N3    &kp N4    &kp N5    &kp N6    &none      &kp N7    &kp N8    &kp N9    &kp N0    &kp MINUS &kp EQUAL &none     &kp BSPC        &kp HOME
-/* R2 */ &kp DEL   &kp TAB   &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &none      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH        &kp PG_UP
-/* R3 */ &none     &kp CLCK  &none     &kp A     &kp S     &kp D     &kp F     &kp G     &none      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET         &kp PG_DN
-/* R4 */ &none     &kp LSHFT &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp RSHFT &kp UP          &kp END
-/* R5 */ &none     &mo 1     &kp LCTRL &kp LALT  &kp LGUI  &none     &kp SPACE &none     &none      &none     &kp SPACE &kp LANG1 &kp RGUI  &tog 2    &kp RCTRL &kp LEFT  &kp DOWN        &kp RIGHT
+/* R0 */ &kp PAUSE_BREAK &kp ESC   &kp C_BRIGHTNESS_DEC &kp C_BRIGHTNESS_INC &none &none     &none     &none     &none      &none     &kp C_PREV &kp C_PP  &kp C_NEXT &kp C_MUTE &kp C_VOL_DN &kp INS   &kp DEL   &kp HOME
+/* R1 */ &kp BSPC        &kp GRAVE &kp N1    &kp N2    &kp N3    &kp N4    &kp N5    &kp N6    &none      &kp N7    &kp N8    &kp N9    &kp N0    &kp MINUS &kp EQUAL &none     &kp BSPC  &kp END
+/* R2 */ &kp DEL         &kp TAB   &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &kp Y      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH  &kp PG_UP
+/* R3 */ &none           &kp CLCK  &none     &kp A     &kp S     &kp D     &kp F     &kp G     &kp H      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET   &kp PG_DN
+/* R4 */ &none           &kp LSHFT &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp LSHFT &kp UP    &kp K_APP
+/* R5 */ &none           &mo 1     &kp LCTRL &kp LALT  &kp LGUI  &none     &kp SPACE &none     &none      &none     &kp SPACE &mo 1     &kp RGUI  &kp RALT  &kp RCTRL &kp LEFT  &kp DOWN  &kp RIGHT
             >;
         };
     };
