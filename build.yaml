@@ -4,3 +4,4 @@ include:
     shield: ksn_2_left
   - board: nice_nano//zmk
     shield: ksn_2_right
+    artifact-name: settings_reset
