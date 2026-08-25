@@ -65,7 +65,7 @@
 /* R1 */ &kp BSPC        &kp GRAVE      &kp N1    &kp N2    &kp N3    &kp N4    &kp N5    &kp N6    &none      &kp N7    &kp N8    &kp N9    &kp N0    &kp MINUS &kp EQUAL &none     &kp BSPC  &kp END
 /* R2 */ &kp DEL         &kp TAB        &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &kp Y      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH  &kp PG_UP
 /* R3 */ &none           &kp CLCK       &none     &kp A     &kp S     &kp D     &kp F     &kp G     &kp H      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET   &kp PG_DN
-/* R4 */ &kp LC(LA(DEL)) &kp LSHFT      &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp LSHFT &kp UP    &kp K_APP
+/* R4 */ &kp LC(LA(DEL)) &kp LSHFT      &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp RSHFT &kp UP    &kp K_APP
 /* R5 */ &kp LG(LS(S))   &mo 1          &kp LCTRL &kp LGUI  &kp LALT  &none     &kp SPACE &none     &none      &none     &kp SPACE &mo 1     &kp RALT  &kp RGUI  &kp RCTRL &kp LEFT  &kp DOWN  &kp RIGHT
             >;
         };
