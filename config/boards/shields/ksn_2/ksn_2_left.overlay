@@ -18,7 +18,7 @@
             gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;   /* D19 = P0.02 */
         };
         ble_led: led_1 {
-            gpios = <&gpio0 29 GPIO_ACTIVE_HIGH>;  /* D20 = P0.29 */
+            gpios = <&gpio0 29 GPIO_ACTIVE_LOW>;   /* D20 = P0.29 */
             label = "BLE Status LED";
         };
     };
