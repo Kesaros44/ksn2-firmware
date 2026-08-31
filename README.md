@@ -5,6 +5,9 @@ ZMK firmware configuration for the KSN-2 split keyboard — a 70% split derived 
 * Keyboard Maintainer: [AJG](https://github.com/Kesaros44)
 * Hardware Supported: KSN-2 split keyboard, nice!nano v2 (nRF52840), BLE
 
+![KSN-2 렌더링 - 상면도](images/ksn2_render_top.png)
+![KSN-2 렌더링 - 입체도](images/ksn2_render_iso.png)
+
 ## Hardware
 
 - **MCU:** nice!nano v2 (nRF52840) per half, wireless (BLE)
