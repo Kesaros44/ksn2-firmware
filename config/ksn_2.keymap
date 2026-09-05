@@ -47,13 +47,22 @@
          *  R2:  Y     U     I     O     P     [     ]     \     PGUP
          *  R3:  H     J     K     L     ;     '     —     RET   PGDN
          *  R4:  B     N     M     ,     .     /     LSHFT UP    K_APP
-         *  R5:  —     SPC   MO1   RALT  RGUI  RCTRL LEFT  DOWN  RIGHT
+         *  R5:  —     SPC   MO1   LANG1 —     RCTRL LEFT  DOWN  RIGHT
          *
          * Notes:
          *  - RC(row, 0..8)  = left half cols
          *  - RC(row, 9..17) = right half cols
          *  - mac1, mac2, and mac3 are system shortcut keys.
          *  - col 8 on left (RC(x,8)) is &none - hardware not wired
+         *  - 2026-09-05: RALT(우측 col12) -> LANG1(한/영). KSN-1과 동일한
+         *    표준 HID usage(0x90) - Win10 1809+/macOS에서 동작, "PC/AT 101키
+         *    호환 키보드(종류 1)" 드라이버에서는 인식 안 될 수 있음(ksn1-firmware
+         *    참고). default_layer/mac_layer 둘 다 동일하게 적용.
+         *  - RGUI(우측 col13, Win)는 &none으로 비움 - 한/영 오타 자동
+         *    되돌리기 트리거 키 자리로 예약(아직 드라이버 미구현). 이걸로
+         *    오른쪽 Win/Cmd는 완전히 사라짐 - 왼쪽 col3(LGUI)만 남음.
+         *    한자(LANG2)는 이번엔 요청 없어서 추가 안 함; RCTRL(col14)은
+         *    그대로 유지.
          */
 
         default_layer {
@@ -66,7 +75,7 @@
 /* R2 */ &kp DEL         &kp TAB        &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &kp Y      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH  &kp PG_UP
 /* R3 */ &kp LG(L)       &kp CLCK       &none     &kp A     &kp S     &kp D     &kp F     &kp G     &kp H      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET   &kp PG_DN
 /* R4 */ &kp LC(LA(DEL)) &kp LSHFT      &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp RSHFT &kp UP    &kp K_APP
-/* R5 */ &kp LG(LS(S))   &mo 1          &kp LCTRL &kp LGUI  &kp LALT  &none     &kp SPACE &none     &none      &none     &kp SPACE &mo 1     &kp RALT  &kp RGUI  &kp RCTRL &kp LEFT  &kp DOWN  &kp RIGHT
+/* R5 */ &kp LG(LS(S))   &mo 1          &kp LCTRL &kp LGUI  &kp LALT  &none     &kp SPACE &none     &none      &none     &kp SPACE &mo 1     &kp LANG1 &none     &kp RCTRL &kp LEFT  &kp DOWN  &kp RIGHT
             >;
         };
 
@@ -92,7 +101,7 @@
 /* R2 */ &kp DEL         &kp TAB        &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &kp Y      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH  &kp PG_UP
 /* R3 */ &kp LG(LC(Q))   &kp CLCK       &none     &kp A     &kp S     &kp D     &kp F     &kp G     &kp H      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET   &kp PG_DN
 /* R4 */ &kp LG(LA(ESC)) &kp LSHFT      &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp LSHFT &kp UP    &kp K_APP
-/* R5 */ &kp LG(LS(N4))  &mo 1          &kp LCTRL &kp LALT  &kp LGUI  &none     &kp SPACE &none     &none      &none     &kp SPACE &mo 1     &kp RGUI  &kp RALT  &kp RCTRL &kp LEFT  &kp DOWN  &kp RIGHT
+/* R5 */ &kp LG(LS(N4))  &mo 1          &kp LCTRL &kp LALT  &kp LGUI  &none     &kp SPACE &none     &none      &none     &kp SPACE &mo 1     &kp LANG1 &none     &kp RCTRL &kp LEFT  &kp DOWN  &kp RIGHT
             >;
         };
     };
