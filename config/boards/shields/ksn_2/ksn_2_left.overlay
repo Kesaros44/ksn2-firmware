@@ -35,10 +35,17 @@
         indicator-led = &ble_led;
     };
 
+    /* 회전 방향 반대로 요청(2026-09-05): quadrature 인코더는 A/B 채널이 감지되는
+       순서로 방향을 판별하므로, a-gpios/b-gpios를 서로 맞바꾸면 배선을 그대로 두고도
+       소프트웨어적으로 방향이 뒤집힘. 물리 핀(P1.15=EN1, P1.13=EN2)은 그대로이고
+       ZMK가 어느 쪽을 "A"로 읽을지만 바뀜. steps/triggers-per-rotation 등 다른 설정은
+       영향 없음 — sensor-bindings 쪽 바인딩 순서(<CW>, <CCW>)를 건드리는 것과 결과는
+       같지만, 인코더 하나에 물린 모든 레이어(볼륨/백라이트)가 한 번에 일괄 반전되므로
+       이 방식을 택함. */
     encoder_left: encoder_left {
         compatible = "alps,ec11";
-        a-gpios = <&gpio1 15 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* EN1 = D15 = P1.15 */
-        b-gpios = <&gpio1 13 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* EN2 = D14 = P1.13 */
+        a-gpios = <&gpio1 13 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* EN2 = D14 = P1.13 (기존 b-gpios) */
+        b-gpios = <&gpio1 15 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  /* EN1 = D15 = P1.15 (기존 a-gpios) */
         steps = <80>;
         status = "okay";
     };
