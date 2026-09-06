@@ -54,7 +54,7 @@
          *  R2:  Y     U     I     O     P     [     ]     \     PGUP
          *  R3:  H     J     K     L     ;     '     —     RET   PGDN
          *  R4:  B     N     M     ,     .     /     LSHFT UP    K_APP
-         *  R5:  —     SPC   word_flip LANG1 MO1   RCTRL LEFT  DOWN  RIGHT
+         *  R5:  —     SPC   LANG1 word_flip MO1   LANG2 LEFT  DOWN  RIGHT
          *
          * Notes:
          *  - RC(row, 0..8)  = left half cols
@@ -74,6 +74,20 @@
          *  - 2026-09-06 (v2): 사용자 요청으로 col11(mo 1/FN)과 col13
          *    (word_flip)의 자리를 서로 바꿈. col12(LANG1)는 그대로 가운데에
          *    있고, 이제 col11=&word_flip, col13=&mo 1.
+         *  - 2026-09-06 (v3): 사용자 요청으로 스페이스바 우측을
+         *    "한/영 - 단어되돌리기 - FN - 한자" 순서로 재배치.
+         *    col11=한/영, col12=&word_flip, col13=&mo 1, col14=한자.
+         *    OS별로 다른 키코드를 쓰는 두 자리:
+         *      col11 한/영  - default_layer=&kp LANG1, mac_layer=&kp CLCK
+         *        (macOS는 LANG1을 일본어 JIS 가나 키로 해석해 한/영 전환이
+         *         안 됨. Caps Lock은 시스템 설정의 "Caps Lock 키로 ABC 입력
+         *         소스 전환"이 켜져 있을 때 짧게 누르면 한/영, 길게 누르면
+         *         실제 Caps Lock으로 동작.)
+         *      col14 한자   - default_layer=&kp LANG2, mac_layer=&kp LA(RET)
+         *        (macOS의 한자 변환은 Option+Return. LANG2는 macOS에서
+         *         동작하지 않음.)
+         *    주의: 이 변경으로 오른쪽 RCTRL이 사라짐 - Ctrl은 왼쪽
+         *    col2(LCTRL)만 남음. 오른쪽 Win/Cmd는 v1에서 이미 사라졌음.
          */
 
         default_layer {
@@ -86,7 +100,7 @@
 /* R2 */ &kp DEL         &kp TAB        &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &kp Y      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH  &kp PG_UP
 /* R3 */ &kp LG(L)       &kp CLCK       &none     &kp A     &kp S     &kp D     &kp F     &kp G     &kp H      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET   &kp PG_DN
 /* R4 */ &kp LC(LA(DEL)) &kp LSHFT      &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp RSHFT &kp UP    &kp K_APP
-/* R5 */ &kp LG(LS(S))   &mo 1          &kp LCTRL &kp LGUI  &kp LALT  &none     &kp SPACE &none     &none      &none     &kp SPACE &word_flip 0     &kp LANG1 &mo 1 &kp RCTRL &kp LEFT  &kp DOWN  &kp RIGHT
+/* R5 */ &kp LG(LS(S))   &mo 1          &kp LCTRL &kp LGUI  &kp LALT  &none     &kp SPACE &none     &none      &none     &kp SPACE &kp LANG1        &word_flip 0 &mo 1 &kp LANG2 &kp LEFT  &kp DOWN  &kp RIGHT
             >;
         };
 
@@ -112,7 +126,7 @@
 /* R2 */ &kp DEL         &kp TAB        &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &kp Y      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH  &kp PG_UP
 /* R3 */ &kp LG(LC(Q))   &kp CLCK       &none     &kp A     &kp S     &kp D     &kp F     &kp G     &kp H      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET   &kp PG_DN
 /* R4 */ &kp LG(LA(ESC)) &kp LSHFT      &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp LSHFT &kp UP    &kp K_APP
-/* R5 */ &kp LG(LS(N4))  &mo 1          &kp LCTRL &kp LALT  &kp LGUI  &none     &kp SPACE &none     &none      &none     &kp SPACE &word_flip 1     &kp CLCK  &mo 1 &kp RCTRL &kp LEFT  &kp DOWN  &kp RIGHT
+/* R5 */ &kp LG(LS(N4))  &mo 1          &kp LCTRL &kp LALT  &kp LGUI  &none     &kp SPACE &none     &none      &none     &kp SPACE &kp CLCK         &word_flip 1 &mo 1 &kp LA(RET) &kp LEFT  &kp DOWN  &kp RIGHT
             >;
         };
     };
