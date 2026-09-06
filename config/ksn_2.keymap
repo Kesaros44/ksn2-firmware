@@ -112,7 +112,7 @@
 /* R2 */ &kp DEL         &kp TAB        &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &kp Y      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH  &kp PG_UP
 /* R3 */ &kp LG(LC(Q))   &kp CLCK       &none     &kp A     &kp S     &kp D     &kp F     &kp G     &kp H      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET   &kp PG_DN
 /* R4 */ &kp LG(LA(ESC)) &kp LSHFT      &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp LSHFT &kp UP    &kp K_APP
-/* R5 */ &kp LG(LS(N4))  &mo 1          &kp LCTRL &kp LALT  &kp LGUI  &none     &kp SPACE &none     &none      &none     &kp SPACE &word_flip 1     &kp LANG1 &mo 1 &kp RCTRL &kp LEFT  &kp DOWN  &kp RIGHT
+/* R5 */ &kp LG(LS(N4))  &mo 1          &kp LCTRL &kp LALT  &kp LGUI  &none     &kp SPACE &none     &none      &none     &kp SPACE &word_flip 1     &kp CLCK  &mo 1 &kp RCTRL &kp LEFT  &kp DOWN  &kp RIGHT
             >;
         };
     };
