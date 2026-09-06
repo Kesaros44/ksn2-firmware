@@ -50,7 +50,8 @@
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
-#if DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT)
+#if (!defined(CONFIG_ZMK_SPLIT) || defined(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)) && \
+    DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT)
 
 #define WORD_FLIP_MAX_LEN 24
 #define WORD_FLIP_TAP_MS 40
@@ -146,4 +147,4 @@ static int word_flip_init(const struct device *dev) {
 BEHAVIOR_DT_INST_DEFINE(0, word_flip_init, NULL, NULL, NULL, POST_KERNEL,
                          CONFIG_KERNEL_INIT_PRIORITY_DEFAULT, &word_flip_driver_api);
 
-#endif /* DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT) */
+#endif /* central-only && DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT) */
