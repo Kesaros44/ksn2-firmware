@@ -122,11 +122,11 @@
             sensor-bindings = <&vol_encoder C_VOL_UP C_VOL_DN>;
             bindings = <
 /* R0 */ &kp PAUSE_BREAK &kp ESC        &kp C_BRIGHTNESS_DEC &kp C_BRIGHTNESS_INC &none &none     &none     &none     &none      &none     &kp C_PREV &kp C_PP  &kp C_NEXT &kp C_MUTE &kp C_VOL_DN &kp INS   &kp DEL   &kp HOME
-/* R1 */ &kp LG(L)       &kp GRAVE      &kp N1    &kp N2    &kp N3    &kp N4    &kp N5    &kp N6    &none      &kp N7    &kp N8    &kp N9    &kp N0    &kp MINUS &kp EQUAL &none     &kp BSPC  &kp END
-/* R2 */ &kp LG(D)       &kp TAB        &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &kp Y      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH  &kp PG_UP
-/* R3 */ &kp LC(S)       &kp CLCK       &none     &kp A     &kp S     &kp D     &kp F     &kp G     &kp H      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET   &kp PG_DN
-/* R4 */ &kp LC(C)       &kp LSHFT      &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp LSHFT &kp UP    &kp K_APP
-/* R5 */ &kp LC(V)       &mo 1          &kp LCTRL &kp LALT  &kp LGUI  &none     &kp SPACE &none     &none      &none     &kp SPACE &kp CLCK         &word_flip 1 &mo 1 &kp LA(RET) &kp LEFT  &kp DOWN  &kp RIGHT
+/* R1 */ &kp BSPC        &kp GRAVE      &kp N1    &kp N2    &kp N3    &kp N4    &kp N5    &kp N6    &none      &kp N7    &kp N8    &kp N9    &kp N0    &kp MINUS &kp EQUAL &none     &kp BSPC  &kp END
+/* R2 */ &kp DEL         &kp TAB        &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &kp Y      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH  &kp PG_UP
+/* R3 */ &kp LG(LC(Q))   &kp CLCK       &none     &kp A     &kp S     &kp D     &kp F     &kp G     &kp H      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET   &kp PG_DN
+/* R4 */ &kp LG(LA(ESC)) &kp LSHFT      &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp LSHFT &kp UP    &kp K_APP
+/* R5 */ &kp LG(LS(N4))  &mo 1          &kp LCTRL &kp LALT  &kp LGUI  &none     &kp SPACE &none     &none      &none     &kp SPACE &kp CLCK         &word_flip 1 &mo 1 &kp LA(RET) &kp LEFT  &kp DOWN  &kp RIGHT
             >;
         };
     };
