@@ -29,6 +29,31 @@
  * 쓰는 것과 동일한 공식 비동기 큐 API라서, 이 파일이 어떤 스레드
  * 컨텍스트에서 호출되든 블로킹 없이 안전하게 순서대로 처리된다.
  *
+ * 수정 이력(2026-09-11): "한영자동변환키를 누르면 실제로 입력했던 단어와
+ * 무관하게 항상 같은 엉뚱한 문자열이 재입력되는" 버그를 다음 두 가지로
+ * 확인/수정함.
+ *
+ * [버그 1 - 근본 원인] 자기 자신의 재입력을 다시 캡처하는 무한 피드백:
+ *   위 2-d 단계에서 큐에 넣은 재입력 자체도 &kp(key_press) behavior를
+ *   거쳐 zmk_keycode_state_changed 이벤트를 "다시" 발생시킨다. 이 파일의
+ *   word_flip_keycode_listener는 그 이벤트 출처를 구분하지 않고 시스템의
+ *   모든 zmk_keycode_state_changed를 구독하므로, 자신이 방금 재입력한
+ *   글자들을 "사용자가 새로 타이핑한 단어"로 다시 buffer에 채워 넣었다.
+ *   그 결과 실제로 어떤 단어를 쳤든 상관없이 buffer 내용이 이전 트리거의
+ *   재입력 결과로 계속 오염/고착되어, 다음 트리거를 누르면 방금 전
+ *   되돌리기의 잔재가 반복 재생되는 것처럼 보이는 문제가 발생했다.
+ *   -> is_replaying 플래그로 재입력 구간 동안 리스너를 비활성화해서
+ *      해결(재입력 시퀀스 전체 소요 시간만큼 지연 후 자동 해제).
+ *
+ * [버그 2 - 방어적 수정] 재입력 시 HID usage page 누락:
+ *   버퍼에는 ev->keycode(=page가 빠진 순수 usage ID)만 저장돼 있었고,
+ *   재입력 시 이를 페이지 없이 그대로 &kp param1에 실었다. ZMK가 인코딩된
+ *   usage의 page 필드가 0이면 HID_USAGE_KEY로 대체 해석해주는 폴백이
+ *   있어 당장 동작은 하지만, 향후 ZMK 버전에서 이 폴백이 사라지면 조용히
+ *   깨지는 잠재적 문제였다. buffer에 usage_page도 함께 저장하고 재입력
+ *   시 ZMK_HID_USAGE(page, id)로 완전한 usage를 명시적으로 재구성하도록
+ *   수정해 폴백에 의존하지 않게 했다.
+ *
  * 주의(2026-09-06): 이 세션에 west 빌드 툴체인이 없어 실제 컴파일 검증을
  * 못 했음. ZMK 공식 문서와 ksn1-firmware에 이미 있는 검증된 코드
  * (calc_macro, ksn1_conn_status_relay 등)의 실제 API를 최대한 그대로
@@ -64,14 +89,29 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
  * 이전 입력 모드인 상태에서 삭제/재입력이 들어가 버린다. 그래서 맥에서는
  * 전환 키 뒤에만 넉넉히 기다린다. */
 #define WORD_FLIP_MAC_TOGGLE_WAIT_MS 350
+/* is_replaying 플래그를 해제하기까지, 실제 큐 처리 시간에 더해 주는
+ * 안전 여유분. 큐 처리 자체가 살짝 밀리더라도 재입력 이벤트가 새 단어로
+ * 오인되지 않도록 넉넉히 잡는다. */
+#define WORD_FLIP_REPLAY_GUARD_SLACK_MS 60
 
 struct word_flip_key {
+    uint16_t usage_page;
     uint32_t keycode;
     uint8_t explicit_modifiers;
 };
 
 static struct word_flip_key buffer[WORD_FLIP_MAX_LEN];
 static size_t buffer_len;
+
+/* 재입력(replay) 구간 동안 true. 이 사이에 들어오는 zmk_keycode_state_changed는
+ * 우리가 방금 큐에 넣은 재입력 자신이 발생시킨 것이므로 캡처 리스너가
+ * 무시해야 한다 (버그 1 참고). */
+static bool is_replaying = false;
+static struct k_work_delayable replay_guard_work;
+
+static void replay_guard_expire(struct k_work *work) {
+    is_replaying = false;
+}
 
 /* 주의: 이벤트의 ev->keycode는 usage page가 빠진 순수 usage ID(A=0x04 ...
  * Z=0x1D)다. 반면 keys.h의 A/Z 매크로는 ZMK_HID_USAGE(page, id)로 page가
@@ -84,6 +124,14 @@ static bool is_letter(uint16_t usage_page, uint32_t keycode) {
 }
 
 static int word_flip_keycode_listener(const zmk_event_t *eh) {
+    if (is_replaying) {
+        /* 우리 자신이 재입력 중인 키 이벤트 - 새 단어로 캡처하면 안 됨
+         * (버그 1). 단어 경계 리셋도 이 구간에서는 하지 않는다: 재입력
+         * 중간에 섞인 비-문자 키(전환/삭제)에 의해 방금 복사해둔 snapshot
+         * 재생이 끝나기도 전에 buffer_len이 건드려질 이유가 없다. */
+        return ZMK_EV_EVENT_BUBBLE;
+    }
+
     const struct zmk_keycode_state_changed *ev = as_zmk_keycode_state_changed(eh);
     if (ev == NULL || !ev->state) {
         return ZMK_EV_EVENT_BUBBLE; /* release는 무시, press만 본다 */
@@ -91,6 +139,7 @@ static int word_flip_keycode_listener(const zmk_event_t *eh) {
 
     if (is_letter(ev->usage_page, ev->keycode)) {
         if (buffer_len < WORD_FLIP_MAX_LEN) {
+            buffer[buffer_len].usage_page = ev->usage_page;
             buffer[buffer_len].keycode = ev->keycode;
             buffer[buffer_len].explicit_modifiers = ev->explicit_modifiers;
             buffer_len++;
@@ -106,8 +155,8 @@ static int word_flip_keycode_listener(const zmk_event_t *eh) {
 ZMK_LISTENER(word_flip_capture, word_flip_keycode_listener);
 ZMK_SUBSCRIPTION(word_flip_capture, zmk_keycode_state_changed);
 
-static void queue_kp_ex(struct zmk_behavior_binding_event *event, uint32_t param1,
-                        uint32_t post_wait_ms) {
+static uint32_t queue_kp_ex(struct zmk_behavior_binding_event *event, uint32_t param1,
+                             uint32_t post_wait_ms) {
     struct zmk_behavior_binding binding = {
         /* "KP"는 devicetree 라벨일 뿐이고, zmk_behavior_get_binding()이 찾는
          * 디바이스 이름은 노드 이름인 "key_press"다 (ZMK app/dts/behaviors/
@@ -119,10 +168,11 @@ static void queue_kp_ex(struct zmk_behavior_binding_event *event, uint32_t param
     };
     zmk_behavior_queue_add(event, binding, true, WORD_FLIP_TAP_MS);
     zmk_behavior_queue_add(event, binding, false, post_wait_ms);
+    return WORD_FLIP_TAP_MS + post_wait_ms;
 }
 
-static void queue_kp(struct zmk_behavior_binding_event *event, uint32_t param1) {
-    queue_kp_ex(event, param1, WORD_FLIP_WAIT_MS);
+static uint32_t queue_kp(struct zmk_behavior_binding_event *event, uint32_t param1) {
+    return queue_kp_ex(event, param1, WORD_FLIP_WAIT_MS);
 }
 
 static int on_word_flip_binding_pressed(struct zmk_behavior_binding *binding,
@@ -138,6 +188,13 @@ static int on_word_flip_binding_pressed(struct zmk_behavior_binding *binding,
     /* 아래에서 보낼 백스페이스가 이 파일의 리스너에도 잡혀서 버퍼를 지울
      * 것이므로, 재입력에 쓸 내용은 이미 snapshot에 복사해뒀으니 미리 비움 */
     buffer_len = 0;
+
+    /* 지금부터 큐에 넣는 모든 키 입력(전환/삭제/재입력)은 이 behavior
+     * 자신이 발생시키는 것이므로, 그 사이에 캡처 리스너가 다시 buffer에
+     * 채워 넣지 못하게 막는다 (버그 1). 실제 처리 시간을 총 wait_ms로
+     * 누적해서 그 시점 이후에 자동 해제한다. */
+    is_replaying = true;
+    uint32_t total_wait_ms = 0;
 
     /* param1: 0 = Windows, 1 = macOS
      *
@@ -161,13 +218,20 @@ static int on_word_flip_binding_pressed(struct zmk_behavior_binding *binding,
      * Ctrl/Option+Backspace는 앱까지 가지 않고 IME가 가로채 조합 중인 음절만
      * 지운다(앞쪽 한글이 남는 증상). 전환 키를 먼저 보내면 그 시점에 조합이
      * 확정되고 IME가 빠지므로 뒤따르는 단어 삭제가 단어 전체에 적용된다. */
-    queue_kp_ex(&event, lang_toggle, is_mac ? WORD_FLIP_MAC_TOGGLE_WAIT_MS : WORD_FLIP_WAIT_MS);
-    queue_kp(&event, delete_word);
+    total_wait_ms += queue_kp_ex(&event, lang_toggle,
+                                  is_mac ? WORD_FLIP_MAC_TOGGLE_WAIT_MS : WORD_FLIP_WAIT_MS);
+    total_wait_ms += queue_kp(&event, delete_word);
 
     for (size_t i = 0; i < snapshot_len; i++) {
-        uint32_t param1 = ((uint32_t)snapshot[i].explicit_modifiers << 24) | snapshot[i].keycode;
-        queue_kp(&event, param1);
+        /* 버그 2 수정: page가 빠진 raw id를 그대로 싣지 않고, 캡처해둔
+         * usage_page로 완전한 HID usage를 재구성해서 보낸다. */
+        uint32_t full_usage = ZMK_HID_USAGE(snapshot[i].usage_page, snapshot[i].keycode);
+        uint32_t param1 = ((uint32_t)snapshot[i].explicit_modifiers << 24) | full_usage;
+        total_wait_ms += queue_kp(&event, param1);
     }
+
+    k_work_reschedule(&replay_guard_work,
+                       K_MSEC(total_wait_ms + WORD_FLIP_REPLAY_GUARD_SLACK_MS));
 
     return ZMK_BEHAVIOR_OPAQUE;
 }
@@ -183,6 +247,7 @@ static const struct behavior_driver_api word_flip_driver_api = {
 };
 
 static int word_flip_init(const struct device *dev) {
+    k_work_init_delayable(&replay_guard_work, replay_guard_expire);
     return 0;
 }
 
