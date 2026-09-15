@@ -174,6 +174,16 @@ static int on_word_flip_binding_pressed(struct zmk_behavior_binding *binding,
      * 지운다(앞쪽 한글이 남는 증상). 전환 키를 먼저 보내면 그 시점에 조합이
      * 확정되고 IME가 빠지므로 뒤따르는 단어 삭제가 단어 전체에 적용된다. */
     queue_kp_ex(&event, lang_toggle, is_mac ? WORD_FLIP_MAC_TOGGLE_WAIT_MS : WORD_FLIP_WAIT_MS);
+
+    if (is_mac) {
+        /* 전환 직후에도 마지막 한글 조합 세션이 완전히 "닫히지" 않고 남아
+         * 있는 경우가 있고, 이 상태에서 오는 Option+Backspace(단어 삭제)가
+         * 단어 경계를 음절 단위로 들쭉날쭉 처리해 일부만 지워지는 증상이
+         * 있음(KSN-3에서 실기로 확인/수정됨). 커서를 한 번 움직이는 키
+         * (오른쪽 화살표)를 끼워넣어 조합을 강제로 커밋시킨 뒤 삭제한다 -
+         * 커서가 이미 줄 끝이면 화살표 자체는 아무 부작용이 없다. */
+        queue_kp(&event, RIGHT);
+    }
     queue_kp(&event, delete_word);
 
     for (size_t i = 0; i < snapshot_len; i++) {
