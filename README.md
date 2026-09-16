@@ -48,6 +48,21 @@ Double-tap reset on the nice!nano to enter the UF2 bootloader, then drag the mat
 
 Flash the `settings_reset` artifact to a half to wipe its BLE bonds, then reflash normal firmware and re-pair.
 
+## Recent Changes
+
+- Added dedicated Hangul (`LANG1`) / Hanja (`LANG2`) keys to the right thumb cluster (ported from KSN-1); `mac_layer`'s Hanja key sends `LA(RET)` (Option+Return) instead, since macOS doesn't treat `LANG2` as Hanja.
+- Ported KSN-1's `word_flip` fixes and switched its macOS language toggle to Caps Lock.
+- Reordered the right thumb row and reworked the left outer column for OS-specific shortcuts (lock screen, screenshot, etc.).
+- Reversed the encoder's rotation direction.
+- Raised BLE TX power by +8dBm for more reliable connections.
+
+## Known Issues / TODO
+
+- **USB PID not registered:** `CONFIG_USB_DEVICE_PID=0x4B54` is a temporary placeholder, same situation as [KSN-1](https://github.com/Kesaros44/ksn1-firmware)'s `0x4B53`.
+- **No right RCTRL:** replaced by the Hanja key — Ctrl now lives only on the left half.
+- **word_flip's macOS delete may share a word-boundary bug found on KSN-3:** on 2026-09-16, [KSN-3](https://github.com/Kesaros44/ksn3-firmware) found that Option+Backspace doesn't respect word boundaries inside Hangul IME composition and switched to resending plain Backspace instead. This board still uses Option+Backspace for that step — check whether it needs the same fix.
+- **Possible unintentional Shift asymmetry:** `default_layer` has `RSHFT` at the right-side R4 second-to-last position, `mac_layer` has `LSHFT` in the same spot. Worth double-checking whether that's intentional.
+
 ---
 
 # ksn2-firmware (한국어)
@@ -96,3 +111,18 @@ nice!nano의 리셋 버튼을 더블탭해서 UF2 부트로더로 진입한 뒤,
 ## 재페어링 / 블루투스 본딩 초기화
 
 `settings_reset` artifact를 해당 half에 플래시하면 BLE 본딩이 초기화됩니다. 그 다음 정상 펌웨어를 다시 플래시하고 재페어링하세요.
+
+## 최근 변경 사항
+
+- 오른쪽 엄지 클러스터에 전용 한/영(`LANG1`)·한자(`LANG2`) 키 추가(KSN-1에서 이식). `mac_layer`의 한자 키는 macOS에서 `LANG2`가 동작하지 않아 `LA(RET)`(Option+Return)로 대신 처리.
+- KSN-1의 `word_flip` 수정 사항을 이식하고, macOS 언어 전환 방식을 Caps Lock으로 변경.
+- 오른쪽 엄지 행 순서 재배치, 왼쪽 최외곽열을 OS별 단축키(잠금 화면, 스크린샷 등)로 재구성.
+- 엔코더 회전 방향 반전.
+- BLE 연결 안정성을 위해 TX 파워 +8dBm 상향.
+
+## 알려진 이슈 / TODO
+
+- **USB PID 미등록:** `CONFIG_USB_DEVICE_PID=0x4B54`도 [KSN-1](https://github.com/Kesaros44/ksn1-firmware)의 `0x4B53`과 마찬가지로 임시 값입니다.
+- **오른쪽 RCTRL 부재:** 한자 키가 그 자리를 대체하면서 Ctrl은 왼쪽 half에만 남았습니다.
+- **word_flip의 macOS 삭제 방식이 KSN-3에서 발견된 단어 경계 버그를 공유할 수 있음:** 2026-09-16, [KSN-3](https://github.com/Kesaros44/ksn3-firmware)에서 Option+Backspace가 한글 IME 조합 중 단어 경계를 지키지 않는 문제가 발견되어 일반 Backspace 반복 전송 방식으로 교체했습니다. 이 저장소는 아직 Option+Backspace를 쓰고 있어 같은 문제가 있을 수 있으니 확인이 필요합니다.
+- **의도치 않은 Shift 비대칭 가능성:** `default_layer`의 오른쪽 R4 끝에서 두 번째 자리는 `RSHFT`, `mac_layer`의 같은 자리는 `LSHFT`로 되어 있습니다. 의도적인지 확인이 필요합니다.
