@@ -88,6 +88,11 @@
          *         동작하지 않음.)
          *    주의: 이 변경으로 오른쪽 RCTRL이 사라짐 - Ctrl은 왼쪽
          *    col2(LCTRL)만 남음. 오른쪽 Win/Cmd는 v1에서 이미 사라졌음.
+         *  - 2026-09-18: 사용자 요청으로 default_layer 왼쪽 col0의 Pause 아래 매크로키
+         *    5개(R1~R5, 기존 Win+L / Win+D / Ctrl+S / Ctrl+C / Ctrl+V)를 F13~F17로
+         *    변경(R1=F13, R2=F14, R3=F15, R4=F16, R5=F17). KSN-2만 해당 - KSN-1/KSN-3은
+         *    변경하지 않음. mac_layer의 같은 자리(Cmd+Ctrl+Q 잠금/Cmd+Opt+Esc 강제종료/
+         *    Cmd+Shift+4 스크린샷)는 그대로 유지됨(func_layer는 &trans라 영향 없음).
          */
 
         default_layer {
@@ -96,11 +101,11 @@
             bindings = <
 /* LEFT col0..8 */                                                                                /* RIGHT col9..17 */
 /* R0 */ &kp PAUSE_BREAK &kp ESC        &kp F1    &kp F2    &kp F3    &kp F4    &kp F5    &kp F6    &none      &kp F7    &kp F8    &kp F9    &kp F10   &kp F11   &kp F12   &kp INS   &kp DEL   &kp HOME
-/* R1 */ &kp LG(L)       &kp GRAVE      &kp N1    &kp N2    &kp N3    &kp N4    &kp N5    &kp N6    &none      &kp N7    &kp N8    &kp N9    &kp N0    &kp MINUS &kp EQUAL &none     &kp BSPC  &kp END
-/* R2 */ &kp LG(D)       &kp TAB        &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &kp Y      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH  &kp PG_UP
-/* R3 */ &kp LC(S)       &kp CLCK       &none     &kp A     &kp S     &kp D     &kp F     &kp G     &kp H      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET   &kp PG_DN
-/* R4 */ &kp LC(C)       &kp LSHFT      &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp RSHFT &kp UP    &kp K_APP
-/* R5 */ &kp LC(V)       &mo 1          &kp LCTRL &kp LGUI  &kp LALT  &none     &kp SPACE &none     &none      &none     &kp SPACE &kp LANG1        &word_flip 0 &mo 1 &kp LANG2 &kp LEFT  &kp DOWN  &kp RIGHT
+/* R1 */ &kp F13         &kp GRAVE      &kp N1    &kp N2    &kp N3    &kp N4    &kp N5    &kp N6    &none      &kp N7    &kp N8    &kp N9    &kp N0    &kp MINUS &kp EQUAL &none     &kp BSPC  &kp END
+/* R2 */ &kp F14         &kp TAB        &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &kp Y      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH  &kp PG_UP
+/* R3 */ &kp F15         &kp CLCK       &none     &kp A     &kp S     &kp D     &kp F     &kp G     &kp H      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET   &kp PG_DN
+/* R4 */ &kp F16         &kp LSHFT      &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp RSHFT &kp UP    &kp K_APP
+/* R5 */ &kp F17         &mo 1          &kp LCTRL &kp LGUI  &kp LALT  &none     &kp SPACE &none     &none      &none     &kp SPACE &kp LANG1        &word_flip 0 &mo 1 &kp LANG2 &kp LEFT  &kp DOWN  &kp RIGHT
             >;
         };
 
