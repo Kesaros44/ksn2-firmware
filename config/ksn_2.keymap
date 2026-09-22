@@ -93,6 +93,11 @@
          *    변경(R1=F13, R2=F14, R3=F15, R4=F16, R5=F17). KSN-2만 해당 - KSN-1/KSN-3은
          *    변경하지 않음. mac_layer의 같은 자리(Cmd+Ctrl+Q 잠금/Cmd+Opt+Esc 강제종료/
          *    Cmd+Shift+4 스크린샷)는 그대로 유지됨(func_layer는 &trans라 영향 없음).
+         *  - 2026-09-22: 사용자 요청으로 mac_layer 왼쪽 col0의 R1~R5도 동일하게
+         *    F13~F17로 변경(R1=F13, R2=F14, R3=F15, R4=F16, R5=F17). 기존 BSPC/DEL
+         *    (R1/R2)과 Cmd+Ctrl+Q 잠금/Cmd+Opt+Esc 강제종료/Cmd+Shift+4 스크린샷
+         *    (R3~R5)을 모두 대체함 - BSPC/DEL은 오른쪽 col16(R1)/R0 col16(DEL)에
+         *    이미 있어 완전히 없어지지는 않음. default_layer와 동일한 레이아웃이 됨.
          */
 
         default_layer {
@@ -127,11 +132,11 @@
             sensor-bindings = <&vol_encoder C_VOL_UP C_VOL_DN>;
             bindings = <
 /* R0 */ &kp PAUSE_BREAK &kp ESC        &kp C_BRIGHTNESS_DEC &kp C_BRIGHTNESS_INC &none &none     &none     &none     &none      &none     &kp C_PREV &kp C_PP  &kp C_NEXT &kp C_MUTE &kp C_VOL_DN &kp INS   &kp DEL   &kp HOME
-/* R1 */ &kp BSPC        &kp GRAVE      &kp N1    &kp N2    &kp N3    &kp N4    &kp N5    &kp N6    &none      &kp N7    &kp N8    &kp N9    &kp N0    &kp MINUS &kp EQUAL &none     &kp BSPC  &kp END
-/* R2 */ &kp DEL         &kp TAB        &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &kp Y      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH  &kp PG_UP
-/* R3 */ &kp LG(LC(Q))   &kp CLCK       &none     &kp A     &kp S     &kp D     &kp F     &kp G     &kp H      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET   &kp PG_DN
-/* R4 */ &kp LG(LA(ESC)) &kp LSHFT      &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp LSHFT &kp UP    &trans   
-/* R5 */ &kp LG(LS(N4))  &mo 1          &kp LCTRL &kp LALT  &kp LGUI  &none     &kp SPACE &none     &none      &none     &kp SPACE &kp CLCK         &word_flip 1 &mo 1 &kp LA(RET) &kp LEFT  &kp DOWN  &kp RIGHT
+/* R1 */ &kp F13         &kp GRAVE      &kp N1    &kp N2    &kp N3    &kp N4    &kp N5    &kp N6    &none      &kp N7    &kp N8    &kp N9    &kp N0    &kp MINUS &kp EQUAL &none     &kp BSPC  &kp END
+/* R2 */ &kp F14         &kp TAB        &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &kp Y      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH  &kp PG_UP
+/* R3 */ &kp F15         &kp CLCK       &none     &kp A     &kp S     &kp D     &kp F     &kp G     &kp H      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET   &kp PG_DN
+/* R4 */ &kp F16         &kp LSHFT      &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp LSHFT &kp UP    &trans   
+/* R5 */ &kp F17         &mo 1          &kp LCTRL &kp LALT  &kp LGUI  &none     &kp SPACE &none     &none      &none     &kp SPACE &kp CLCK         &word_flip 1 &mo 1 &kp LA(RET) &kp LEFT  &kp DOWN  &kp RIGHT
             >;
         };
     };
