@@ -101,10 +101,10 @@
          *    그대로 유지.
          *  - 2026-09-06 (v2): 사용자 요청으로 col11(mo 1/FN)과 col13
          *    (word_flip)의 자리를 서로 바꿈. col12(LANG1)는 그대로 가운데에
-         *    있고, 이제 col11=&word_flip, col13=&mo 1.
+         *    있고, 이제 col11=&word_flip, col13=&mo 2.
          *  - 2026-09-06 (v3): 사용자 요청으로 스페이스바 우측을
          *    "한/영 - 단어되돌리기 - FN - 한자" 순서로 재배치.
-         *    col11=한/영, col12=&word_flip, col13=&mo 1, col14=한자.
+         *    col11=한/영, col12=&word_flip, col13=&mo 2, col14=한자.
          *    OS별로 다른 키코드를 쓰는 두 자리:
          *      col11 한/영  - default_layer=&kp LANG1, mac_layer=&kp CLCK
          *        (macOS는 LANG1을 일본어 JIS 가나 키로 해석해 한/영 전환이
@@ -138,20 +138,7 @@
 /* R2 */ &kp F14         &kp TAB        &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &kp Y      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH  &kp PG_UP
 /* R3 */ &kp F15         &kp CLCK       &none     &kp A     &kp S     &kp D     &kp F     &kp G     &kp H      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET   &kp PG_DN
 /* R4 */ &kp F16         &kp LSHFT      &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp RSHFT &kp UP    &kp K_APP
-/* R5 */ &kp F17         &mo 1          &kp LCTRL &kp LGUI  &kp LALT  &none     &kp SPACE &none     &none      &none     &kp SPACE &kp LANG1        &word_flip 0 &mo 1 &kp LANG2 &kp LEFT  &kp DOWN  &kp RIGHT
-            >;
-        };
-
-        func_layer {
-            /* left encoder: backlight */
-            sensor-bindings = <&inc_dec_bl>;
-            bindings = <
-/* R0 */ &trans     &trans    &trans       &trans       &trans       &trans       &trans       &trans    &trans     &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans          &bt BT_CLR
-/* R1 */ &trans     &trans    &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4 &out OUT_TOG &trans  &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans          &trans
-/* R2 */ &trans     &trans    &trans       &trans       &trans       &trans       &trans       &trans    &trans     &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans          &trans
-/* R3 */ &trans     &trans    &trans       &trans       &trans       &trans       &trans       &trans    &trans     &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans          &trans
-/* R4 */ &trans     &trans    &trans       &trans       &trans       &trans       &trans       &trans    &trans     &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans          &tog 2
-/* R5 */ &trans     &trans    &trans       &trans       &trans       &trans       &trans       &trans    &trans     &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans          &trans
+/* R5 */ &kp F17         &mo 2          &kp LCTRL &kp LGUI  &kp LALT  &none     &kp SPACE &none     &none      &none     &kp SPACE &kp LANG1        &word_flip 0 &mo 2 &kp LANG2 &kp LEFT  &kp DOWN  &kp RIGHT
             >;
         };
 
@@ -164,7 +151,24 @@
 /* R2 */ &kp F14         &kp TAB        &none     &kp Q     &kp W     &kp E     &kp R     &kp T     &kp Y      &kp Y     &kp U     &kp I     &kp O     &kp P     &kp LBKT  &kp RBKT  &kp BSLH  &kp PG_UP
 /* R3 */ &kp F15         &kp CLCK       &none     &kp A     &kp S     &kp D     &kp F     &kp G     &kp H      &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &none     &kp RET   &kp PG_DN
 /* R4 */ &kp F16         &kp LSHFT      &none     &kp Z     &kp X     &kp C     &kp V     &kp B     &none      &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp LSHFT &kp UP    &trans   
-/* R5 */ &kp F17         &mo 1          &kp LCTRL &kp LALT  &kp LGUI  &none     &kp SPACE &none     &none      &none     &kp SPACE &kp CLCK         &word_flip 1 &mo 1 &kp LA(RET) &kp LEFT  &kp DOWN  &kp RIGHT
+/* R5 */ &kp F17         &mo 2          &kp LCTRL &kp LALT  &kp LGUI  &none     &kp SPACE &none     &none      &none     &kp SPACE &kp CLCK         &word_flip 1 &mo 2 &kp LA(RET) &kp LEFT  &kp DOWN  &kp RIGHT
+            >;
+        };
+
+        /* 레이어 순서: default(0) → mac(1) → func(2).
+           func_layer를 맨 위에 두어 FN(&mo 2)을 누르면 Windows/Mac 모드와 관계없이 항상 이 레이어가
+           우선한다(ZMK는 켜진 레이어 중 번호가 높은 것부터 확인). &trans 자리는 아래 레이어로 통과하므로
+           FN 없이 누른 키는 그대로 mac_layer/default_layer 동작을 한다. Mac 모드 전환은 &tog 1. */
+        func_layer {
+            /* left encoder: backlight */
+            sensor-bindings = <&inc_dec_bl>;
+            bindings = <
+/* R0 */ &trans     &trans    &trans       &trans       &trans       &trans       &trans       &trans    &trans     &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans          &bt BT_CLR
+/* R1 */ &trans     &trans    &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4 &out OUT_TOG &trans  &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans          &trans
+/* R2 */ &trans     &trans    &trans       &trans       &trans       &trans       &trans       &trans    &trans     &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans          &trans
+/* R3 */ &trans     &trans    &trans       &trans       &trans       &trans       &trans       &trans    &trans     &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans          &trans
+/* R4 */ &trans     &trans    &trans       &trans       &trans       &trans       &trans       &trans    &trans     &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans          &tog 1
+/* R5 */ &trans     &trans    &trans       &trans       &trans       &trans       &trans       &trans    &trans     &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans          &trans
             >;
         };
     };

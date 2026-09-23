@@ -24,8 +24,8 @@ ZMK firmware for the KSN-2 split keyboard — a 70% split derived from [KSN-1](h
 Three layers, same structure as KSN-1:
 
 - **`default_layer`** — Windows base layer. Left encoder = volume. Left column 8 is unused (`&none` — not physically wired on this half).
-- **`func_layer`** (hold `&mo 1`) — Bluetooth profile select (0–4) and output toggle, backlight inc/dec on the encoder (no-op — no backlight hardware), toggle (`&tog 2`) into `mac_layer`.
 - **`mac_layer`** — same shape as `default_layer`, with Mac modifier ordering and Mac media/brightness keys in place of the F-row.
+- **`func_layer`** (hold `&mo 2`; top layer, so FN always takes priority in both Windows and Mac modes) — Bluetooth profile select (0–4) and output toggle, backlight inc/dec on the encoder (no-op — no backlight hardware), toggle (`&tog 1`) into `mac_layer`.
 
 ## Building
 
@@ -88,8 +88,8 @@ KSN-2 스플릿 키보드용 ZMK 펌웨어 설정입니다 — [KSN-1](https://g
 KSN-1과 동일한 구조의 3개 레이어:
 
 - **`default_layer`** — Windows 기본 레이어. 왼쪽 인코더 = 볼륨. 왼쪽 8번째 열은 사용 안 함(`&none` — 이 half엔 물리적으로 배선되지 않음).
-- **`func_layer`** (홀드 `&mo 1`) — 블루투스 프로필 선택(0–4) 및 출력 토글, 인코더로 백라이트 증감(백라이트 하드웨어 자체가 없어서 실제 동작은 없음), `mac_layer`로의 토글(`&tog 2`).
 - **`mac_layer`** — `default_layer`와 동일한 구조에 Mac 모디파이어 순서와 F행 대신 Mac 미디어/밝기 키.
+- **`func_layer`** (홀드 `&mo 2`, 맨 위 레이어 — Windows/Mac 모드와 관계없이 FN을 누르면 항상 우선) — 블루투스 프로필 선택(0–4) 및 출력 토글, 인코더로 백라이트 증감(백라이트 하드웨어 자체가 없어서 실제 동작은 없음), `mac_layer`로의 토글(`&tog 1`).
 
 ## 빌드
 
